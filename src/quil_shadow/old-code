@@ -1,0 +1,67 @@
+(ns quil-shadow.main
+  (:require [devtools.core :as devtools]
+            [quil.core :as q :include-macros true]))
+  
+
+(devtools/install!)
+
+(defn setup []
+  (q/frame-rate 30))
+
+(defn t []
+  (* -0.002 (q/millis)))
+
+(defn calc-y [x mid amp]
+  (+ mid (* (q/sin (+ (t) x)) amp)))
+
+(defn wave [step mid-y amp]
+  (let [w (q/width)
+        h (q/height)
+        mult (q/map-range w
+                          1 20
+                          0.01 1)]
+    (q/begin-shape)
+    (q/vertex 0 h) ; lower left corner
+    (doseq [x (range (- w) (- step w) step)]
+      (let [t (* x mult)
+            y (calc-y t mid-y amp)]
+        (q/vertex x y)))
+    (q/vertex w mult) ; lower right corner
+    (q/end-shape)))
+
+(defn draw []
+  (q/background 250)
+  (q/stroke 255 250) ;; stroke 
+  (q/fill 10 230 (+ (* 10 (q/sin (t))) 230) 40)
+  (let [h (q/height)
+        move-down (/ h 10)
+        amp (/ h 1)]
+    (doseq [y (range move-down (+ amp h) 100)]
+      (let [x-step (- (* y ) move-down)]
+        (wave x-step y amp)))))
+
+;;(defn draw-rectangle []
+ ;; (q/fill 12 12 125)
+; normal rect
+  ;;(q/rect 50 50 50 50)
+; rect with rounded corners
+  ;;(q/rect 300 50 150 100 20)
+; rect with rounded corners where each corner is different
+  ;;(q/rect 50 50 50 150 5 150 20 30))
+
+(defn draw-all []
+  (draw))
+  ;;(draw-rectangle))
+
+
+(q/defsketch waves
+  :host "host"
+  :size [1800 900]
+  :setup setup
+  :draw draw-all)
+
+
+
+
+(defn main! []
+  (js/console.log "starting main…"))

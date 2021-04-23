@@ -1,1 +1,1 @@
-{:lint-as {quil.sketch/defsketch clojure.core/def}}
+{:lint-as {quil.core/defsketch clojure.core/def}}
